@@ -23,7 +23,7 @@ This is a research prototype, not a production-ready threat catalogue. The threa
 
 Pure static HTML/CSS/JS — no build step, no dependencies.
 
-Open `website/index.html` directly in a browser, or serve the folder with any static server:
+Open `index.html` directly in a browser, or serve the folder with any static server:
 
 ```
 cd website
@@ -34,8 +34,8 @@ Then visit `http://localhost:8000`.
 
 ## Files
 
-- `website/index.html` — markup and filter UI
-- `website/index.css` — styling
-- `website/index.js` — filter logic and matrix rendering
-- `website/threat-content.js` — threat catalogue (descriptions, mitigations, tags)
-- `website/threat-static-references.js` — external reference links per threat
+- `index.html` — markup and filter UI
+- `index.css` — styling
+- `index.js` — filter logic and matrix rendering
+- `threat-content.js` — threat catalogue (descriptions, mitigations, tags)
+- `threat-static-references.js` — external reference links per threat
