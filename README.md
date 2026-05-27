@@ -22,11 +22,9 @@ This is a research prototype, not a production-ready threat catalogue. The threa
 ## Running
 
 Pure static HTML/CSS/JS — no build step, no dependencies.
-
 Open `index.html` directly in a browser, or serve the folder with any static server:
 
 ```
-cd website
 python -m http.server 8000
 ```
 
