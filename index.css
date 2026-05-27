@@ -1,0 +1,567 @@
+/* ═══════════════════════════════════════════
+   ROBOTICS THREAT MODEL — MITRE-STYLE
+   ═══════════════════════════════════════════ */
+
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg:        #0d1117;
+    --surface:   #161b22;
+    --card:      #1c2230;
+    --border:    #30363d;
+    --text:      #e6edf3;
+    --text-dim:  #8b949e;
+    --accent:    #58a6ff;
+    --glow:      rgba(88,166,255,.12);
+
+    /* category colors */
+    --c1: #f97583;  /* Communication */
+    --c2: #d2a8ff;  /* System & Control */
+    --c3: #79c0ff;  /* Sensor */
+    --c4: #56d364;  /* Cloud/API */
+    --c5: #ff7b72;  /* AI/ML/LLM */
+    --c6: #ffa657;  /* Identity */
+    --c7: #d29922;  /* Supply Chain */
+    --c8: #a5d6ff;  /* Data Security */
+    --c9: #f0883e;  /* Hardware */
+    --c10:#7ee787;  /* Safety */
+    --c11:#db61a2;  /* Availability */
+    --c12:#e3b341;  /* Governance */
+
+    /* severity */
+    --sev-low:      #56d364;
+    --sev-medium:   #d29922;
+    --sev-high:     #f97583;
+    --sev-critical: #ff4757;
+
+    --radius: 8px;
+    --transition: .2s ease;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* ── HERO ── */
+.hero {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a1e2e 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 2rem 1.5rem;
+    margin-left: 280px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 600px 300px at 20% 50%, rgba(88,166,255,.07), transparent),
+        radial-gradient(ellipse 500px 250px at 80% 40%, rgba(249,117,131,.06), transparent);
+    pointer-events: none;
+}
+.hero-inner { position: relative; max-width: 720px; margin: 0 auto; }
+.hero-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border: 1px solid var(--accent);
+    border-radius: 20px;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
+.hero h1 {
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, #e6edf3, #58a6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: .5rem;
+}
+.hero-sub {
+    color: var(--text-dim);
+    font-size: .85rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.guide-strip {
+    margin-left: 280px;
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+}
+.guide-strip-inner {
+    max-width: none;
+    margin: 0 1.5rem;
+    padding: .65rem 1.5rem;
+}
+.guide-strip p {
+    font-size: .74rem;
+    color: var(--text-dim);
+    line-height: 1.45;
+}
+.guide-strip strong {
+    color: var(--text);
+}
+
+/* ── FILTER BAR ── */
+.filter-bar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 1rem;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 100;
+    overflow-y: auto;
+    backdrop-filter: blur(12px);
+}
+.filter-bar-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.filter-group h3 {
+    font-size: .65rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin-bottom: .6rem;
+}
+.cps-domain-group.is-hidden {
+    display: none;
+}
+.filter-collapse {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: inherit;
+    font-size: .72rem;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: .5rem;
+}
+.filter-collapse:hover {
+    border-color: var(--accent);
+}
+.collapse-chevron {
+    font-size: .62rem;
+    color: var(--text-dim);
+    transition: transform .2s ease;
+}
+.filter-collapse[aria-expanded="true"] .collapse-chevron {
+    transform: rotate(90deg);
+}
+.tag-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.pill {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: .72rem;
+    padding: 3px 10px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+.pill:hover { border-color: var(--accent); color: var(--text); }
+.pill.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0d1117;
+    font-weight: 600;
+}
+
+.clear-btn {
+    margin-top: 1rem;
+    width: 100%;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: .75rem;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.clear-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── MATRIX ── */
+.matrix {
+    max-width: none;
+    margin: 1.5rem 1.5rem 1.5rem 300px;
+    padding: 0 1.5rem 3rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+/* Category column */
+.category {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: var(--transition);
+}
+.category:hover {
+    border-color: color-mix(in srgb, var(--cat-color) 50%, transparent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--cat-color) 10%, transparent);
+}
+.category-header {
+    padding: .85rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--cat-color) 6%, var(--surface));
+}
+.category-num {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: .7rem;
+    font-weight: 700;
+    color: var(--bg);
+    background: var(--cat-color);
+    flex-shrink: 0;
+}
+.category-title {
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--text);
+}
+.category-count {
+    margin-left: auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: .65rem;
+    color: var(--text-dim);
+}
+
+/* Threat cards */
+.threat-list { padding: .5rem; display: flex; flex-direction: column; gap: 4px; }
+
+.threat-card {
+    background: var(--card);
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: .55rem .75rem;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+}
+.threat-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 6px 0 0 6px;
+    background: var(--cat-color);
+    opacity: 0;
+    transition: var(--transition);
+}
+.threat-card:hover {
+    border-color: var(--border);
+    background: color-mix(in srgb, var(--cat-color) 5%, var(--card));
+}
+.threat-card:hover::before { opacity: 1; }
+
+.threat-card.expanded {
+    border-color: color-mix(in srgb, var(--cat-color) 30%, transparent);
+    background: color-mix(in srgb, var(--cat-color) 8%, var(--card));
+}
+.threat-card.expanded::before { opacity: 1; }
+
+.threat-name {
+    font-size: .78rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .5rem;
+}
+.threat-name .chevron {
+    font-size: .6rem;
+    color: var(--text-dim);
+    transition: transform .2s;
+}
+.threat-card.expanded .chevron { transform: rotate(90deg); }
+
+.threat-detail {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .35s ease, padding .25s ease;
+}
+.threat-card.expanded .threat-detail {
+    max-height: clamp(280px, 52vh, 620px);
+    overflow-y: auto;
+    padding-top: .5rem;
+    padding-right: .2rem;
+}
+.threat-summary {
+    font-size: .72rem;
+    line-height: 1.5;
+    color: var(--text);
+    padding: .45rem .55rem;
+    background: color-mix(in srgb, var(--cat-color) 9%, var(--bg));
+    border: 1px solid color-mix(in srgb, var(--cat-color) 24%, transparent);
+    border-radius: 6px;
+    margin-bottom: .5rem;
+}
+
+.threat-mitigations,
+.threat-references {
+    margin-top: .5rem;
+    padding-top: .5rem;
+    border-top: 1px dashed color-mix(in srgb, var(--cat-color) 26%, var(--border));
+    opacity: .98;
+}
+
+.threat-section-title {
+    font-size: .62rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    margin-bottom: .25rem;
+}
+
+.threat-mitigations ul,
+.threat-references ul {
+    list-style: disc;
+    padding-left: 1rem;
+    margin: 0;
+    display: grid;
+    gap: .18rem;
+}
+
+.threat-mitigations li,
+.threat-references li {
+    font-size: .73rem;
+    color: color-mix(in srgb, var(--text) 82%, var(--text-dim));
+    line-height: 1.55;
+}
+
+/* Keep mitigation text exactly equal to threat explanation sizing. */
+.threat-detail .threat-mitigations li,
+.threat-detail .threat-mitigations li a {
+    font-size: .73rem !important;
+    line-height: 1.55 !important;
+}
+
+.threat-detail .threat-mitigations li::marker {
+    font-size: .73rem;
+}
+
+.threat-references a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.threat-references a:hover {
+    color: #8cc2ff;
+}
+
+/* Filter summary */
+.filter-summary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .75rem 1rem;
+    margin: 1rem 1.5rem 1rem 300px;
+    font-size: .8rem;
+    color: var(--accent);
+    border-left: 3px solid var(--accent);
+}
+
+/* Top Threats Inline */
+.top-threats-inline {
+    grid-column: 1 / -1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.top-threats-inline .top-threats-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, var(--surface), color-mix(in srgb, var(--accent) 7%, var(--surface)));
+}
+
+.top-threats-inline .top-threats-header h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: .3rem;
+    color: var(--text);
+}
+
+.top-threats-inline .top-threats-header p {
+    font-size: .7rem;
+    color: var(--text-dim);
+    margin: 0;
+}
+
+.top-threats-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: .75rem;
+    padding: 1rem;
+}
+
+.top-threat-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.top-threat-item:hover {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 4%, var(--card));
+    transform: translateY(-1px);
+}
+
+.top-threat-rank {
+    width: 28px;
+    height: 28px;
+    background: var(--accent);
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.top-threat-info {
+    flex: 1;
+}
+
+.top-threat-name {
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: .3rem;
+    line-height: 1.2;
+}
+
+.top-threat-meta {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.top-threat-category {
+    font-size: .65rem;
+    color: var(--text-dim);
+    background: var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+
+.top-threat-score {
+    font-size: .65rem;
+    color: var(--text-dim);
+}
+
+/* Hide non-matches so filter logic is visually unambiguous */
+.threat-card.hidden {
+    display: none;
+}
+.category.all-dimmed {
+    display: none;
+}
+
+/* ── FOOTER ── */
+footer {
+    text-align: center;
+    padding: 2rem;
+    margin-left: 280px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: .75rem;
+}
+footer a { color: var(--accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .filter-bar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+    .filter-bar-inner {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .hero {
+        margin-left: 0;
+        padding: 1.5rem 1.25rem 1rem;
+    }
+    .guide-strip {
+        margin-left: 0;
+    }
+    .guide-strip-inner {
+        margin: 0;
+        padding: .65rem 1.25rem;
+    }
+    .matrix {
+        margin-left: 0;
+        margin-right: 0;
+        grid-template-columns: 1fr;
+    }
+    .footer {
+        margin-left: 0;
+    }
+    .filter-summary {
+        margin: 1rem 1.5rem;
+    }
+    .top-threats-list {
+        grid-template-columns: 1fr;
+        gap: .5rem;
+    }
+}

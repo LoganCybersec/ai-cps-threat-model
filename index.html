@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robotics Threat Model — MITRE-Style Matrix</title>
+    <meta name="description" content="Interactive robotics threat model covering AI/LLM, sensor, network, and physical threats with tag-based filtering.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <!-- ═══════════════ HERO / HEADER ═══════════════ -->
+    <header class="hero">
+        <div class="hero-inner">
+            <div class="hero-badge">ROBOTICS THREAT MODEL</div>
+            <h1>Cyber-Physical Threat Matrix</h1>
+            <p class="hero-sub">An interactive threat model for robotic &amp; autonomous systems — including AI/LLM attack surfaces. Filter by robot context, sensors, connectivity, and attacker profile.</p>
+        </div>
+    </header>
+
+    <section class="guide-strip" aria-label="How to use threat cards">
+        <div class="guide-strip-inner">
+            <p><strong>Quick use:</strong> each threat card now shows a short summary, concrete mitigations, and exactly 2 external references so you can go deeper fast.</p>
+        </div>
+    </section>
+
+    <!-- ═══════════════ FILTER BAR ═══════════════ -->
+    <section class="filter-bar" id="filterBar">
+        <div class="filter-bar-inner">
+            <div class="filter-group">
+                <h3>Robot Type</h3>
+                <div class="tag-pills" data-dimension="robotType">
+                    <button class="pill" data-tag="industrial-arm">Industrial Arm</button>
+                    <button class="pill" data-tag="cobot">Cobot</button>
+                    <button class="pill" data-tag="drone">Drone</button>
+                    <button class="pill" data-tag="agv-amr">AGV / AMR</button>
+                    <button class="pill" data-tag="autonomous-vehicle">Autonomous Vehicle</button>
+                    <button class="pill" data-tag="service-robot">Service Robot</button>
+                    <button class="pill" data-tag="medical-robot">Medical Robot</button>
+                </div>
+            </div>
+            <div class="filter-group">
+                <h3>Environment</h3>
+                <div class="tag-pills" data-dimension="environment">
+                    <button class="pill" data-tag="factory">Factory</button>
+                    <button class="pill" data-tag="warehouse">Warehouse</button>
+                    <button class="pill" data-tag="healthcare">Healthcare</button>
+                    <button class="pill" data-tag="public-space">Public Space</button>
+                    <button class="pill" data-tag="home">Home</button>
+                    <button class="pill" data-tag="defense">Defense</button>
+                    <button class="pill" data-tag="critical-infrastructure">Critical Infra</button>
+                    <button class="pill" data-tag="maritime">Maritime</button>
+                </div>
+            </div>
+            <div class="filter-group">
+                <h3>AI Stack</h3>
+                <div class="tag-pills" data-dimension="aiStack">
+                    <button class="pill" data-tag="none">None</button>
+                    <button class="pill" data-tag="classical-ml">Classical ML</button>
+                    <button class="pill" data-tag="computer-vision">Computer Vision</button>
+                    <button class="pill" data-tag="speech-recognition">Speech Recognition</button>
+                    <button class="pill" data-tag="llm-assistant">LLM Assistant</button>
+                    <button class="pill" data-tag="llm-agent">LLM Agent</button>
+                </div>
+            </div>
+            <div class="filter-group">
+                <h3>Sensors</h3>
+                <div class="tag-pills" data-dimension="sensors">
+                    <button class="pill" data-tag="camera">Camera</button>
+                    <button class="pill" data-tag="lidar">LiDAR</button>
+                    <button class="pill" data-tag="gps">GPS</button>
+                    <button class="pill" data-tag="imu">IMU</button>
+                    <button class="pill" data-tag="ultrasonic">Ultrasonic</button>
+                    <button class="pill" data-tag="infrared">Infrared</button>
+                    <button class="pill" data-tag="microphone">Microphone</button>
+                </div>
+            </div>
+            <div class="filter-group">
+                <h3>Network</h3>
+                <div class="tag-pills" data-dimension="network">
+                    <button class="pill" data-tag="air-gapped">Air-gapped</button>
+                    <button class="pill" data-tag="lan-only">LAN Only</button>
+                    <button class="pill" data-tag="wifi">Wi-Fi</button>
+                    <button class="pill" data-tag="cellular">4G/5G</button>
+                    <button class="pill" data-tag="internet-exposed">Internet Exposed</button>
+                </div>
+            </div>
+            <div class="filter-group">
+                <h3>Attacker</h3>
+                <div class="tag-pills" data-dimension="attacker">
+                    <button class="pill" data-tag="low-skill">Low-Skill</button>
+                    <button class="pill" data-tag="insider">Insider</button>
+                    <button class="pill" data-tag="organized">Organized</button>
+                    <button class="pill" data-tag="nation-state">Nation-State</button>
+                    <button class="pill" data-tag="supply-chain">Supply-Chain</button>
+                </div>
+            </div>
+            <div class="filter-group">
+                <h3>Severity</h3>
+                <div class="tag-pills" data-dimension="severity">
+                    <button class="pill" data-tag="low">Low</button>
+                    <button class="pill" data-tag="medium">Medium</button>
+                    <button class="pill" data-tag="high">High</button>
+                    <button class="pill" data-tag="critical">Critical</button>
+                </div>
+            </div>
+
+            <!-- ── NEW: Context-aware dimensions ── -->
+            <div class="filter-group">
+                <h3>Data Sensitivity</h3>
+                <div class="tag-pills" data-dimension="dataSensitivity">
+                    <button class="pill" data-tag="public">Public</button>
+                    <button class="pill" data-tag="internal">Internal</button>
+                    <button class="pill" data-tag="user-data">User Data</button>
+                    <button class="pill" data-tag="confidential">Confidential</button>
+                    <button class="pill" data-tag="classified">Classified</button>
+                </div>
+            </div>
+
+            <button class="clear-btn" id="clearFilters">✕ Clear all filters</button>
+        </div>
+    </section>
+
+    <!-- ═══════════════ MATRIX ═══════════════ -->
+    <main class="matrix" id="matrix">
+        <!-- populated by JS -->
+    </main>
+
+    <!-- ═══════════════ FOOTER ═══════════════ -->
+    <footer>
+        <p>Robotics Threat Model — Bachelor Project 2026 · Inspired by <a href="https://attack.mitre.org/" target="_blank" rel="noopener">MITRE ATT&CK</a></p>
+    </footer>
+
+    <script src="threat-static-references.js"></script>
+    <script src="threat-content.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
