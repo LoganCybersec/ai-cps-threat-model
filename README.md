@@ -30,6 +30,8 @@ python -m http.server 8000
 
 Then visit `http://localhost:8000`.
 
+Or visit https://logancybersec.github.io/ai-cps-threat-model/
+
 ## Files
 
 - `index.html` — markup and filter UI
